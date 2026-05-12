@@ -27,5 +27,13 @@ python3 gui.py
 
 ## Gameplay notes
 
-- Console prompts use row letters and column numbers.
-- GUI controls: left-click reveals a cell, right-click toggles a flag.
+- Shared presets: Beginner (`9x9`, `10`), Intermediate (`16x16`, `40`), Expert (`16x30`, `99`), and Custom.
+- Custom constraints: rows `5-26`, cols `5-26`, mines `1` to `rows * cols - 9`.
+- Console command grammar:
+  - `A1` reveal
+  - `f A1` toggle flag/question
+  - `n` new game, `q` quit, `h` help
+- GUI controls:
+  - Left click reveal
+  - Right click cycles hidden -> flag -> ? -> hidden
+  - Middle click (or left+right together) chord reveal

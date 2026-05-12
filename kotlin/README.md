@@ -4,14 +4,24 @@ Console Minesweeper implementation in Kotlin with JUnit 5 tests.
 
 ## Requirements
 
-- JDK 22+
-- IntelliJ IDEA (recommended for running the app entrypoint)
+- JDK 17+
 
-## Run the app (IntelliJ IDEA)
+## Run the app (CLI)
 
-1. Open the `kotlin` folder as a project in IntelliJ IDEA.
-2. Open `src/main/kotlin/Main.kt`.
-3. Run `main()` (`MainKt`).
+From repository root:
+
+```bash
+cd kotlin
+./gradlew run --console=plain -q
+```
+
+If `gradlew` is not executable yet on macOS/Linux:
+
+```bash
+cd kotlin
+chmod +x gradlew
+./gradlew run --console=plain -q
+```
 
 ## Run tests (CLI)
 
@@ -19,14 +29,6 @@ From repository root:
 
 ```bash
 cd kotlin
-bash ./gradlew test
-```
-
-If you prefer running `./gradlew` directly on macOS/Linux, make it executable once:
-
-```bash
-cd kotlin
-chmod +x gradlew
 ./gradlew test
 ```
 
@@ -34,11 +36,21 @@ chmod +x gradlew
 
 ```bash
 cd kotlin
-bash ./gradlew build
+./gradlew build
 ```
 
 ## Gameplay notes
 
-- Grid size accepts values from `4` to `26`.
-- Mine count must be at least `1` and up to `35%` of total cells.
-- Squares are selected using coordinates like `A1`.
+- Presets: Beginner (`9x9`, `10`), Intermediate (`16x16`, `40`), Expert (`16x30`, `99`), and Custom.
+- Custom constraints: rows `5-26`, cols `5-26`, mines `1` to `rows * cols - 9`.
+- Command grammar:
+  - `A1` reveal
+  - `f A1` toggle flag/question
+  - `c A1` chord reveal
+  - `n` new game, `q` quit, `h` help
+
+## Optional: Run in IntelliJ IDEA
+
+1. Open the `kotlin` folder as a project.
+2. Open `src/main/kotlin/Main.kt`.
+3. Run `main()` (`MainKt`).

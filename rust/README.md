@@ -24,6 +24,10 @@ cargo test
 
 ## Gameplay notes
 
-- Enter board size as two numbers (for example `9 9`).
-- Enter mine count less than the total number of cells.
-- Enter moves using coordinates like `A1`.
+- Presets: Beginner (`9x9`, `10`), Intermediate (`16x16`, `40`), Expert (`16x30`, `99`), and Custom.
+- Custom constraints: rows `5-26`, cols `5-26`, mines `1` to `rows * cols - 9`.
+- Command grammar:
+  - `A1` reveal
+  - `f A1` toggle flag/question
+  - `c A1` chord reveal
+  - `n` new game, `q` quit, `h` help

@@ -47,6 +47,10 @@ dotnet test Minesweeper.Tests/Minesweeper.Tests.csproj --verbosity detailed
 
 ## Gameplay notes
 
-- Grid size accepts values from `4` to `26`.
-- Mine count must be between `1` and the max allowed for the selected grid.
-- Squares are selected using coordinates like `A1`.
+- Presets: Beginner (`9x9`, `10`), Intermediate (`16x16`, `40`), Expert (`16x30`, `99`), and Custom.
+- Custom constraints: rows `5-26`, cols `5-26`, mines `1` to `rows * cols - 9`.
+- Command grammar:
+  - `A1` reveal
+  - `f A1` toggle flag/question
+  - `c A1` chord reveal
+  - `n` new game, `q` quit, `h` help
