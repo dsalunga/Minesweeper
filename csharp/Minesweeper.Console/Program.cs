@@ -1,6 +1,4 @@
-﻿using MineSweeper;
-
-Console.WriteLine("Welcome to Minesweeper!");
+using MineSweeper;
 
 var game = new GameConsole();
 game.Initialize();

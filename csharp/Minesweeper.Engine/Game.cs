@@ -6,9 +6,9 @@
         protected const int MAX_GRID_SIZE = 26; // Set the maximum grid size to 26x26 as it's the maximum for the English alphabet
         protected const double MAX_MINES_PCT = 0.35; // Maximum 35% of mines in the grid, in decimal equivalent
 
-        public Grid Grid { get; private set; }
-        public bool Initialized { get; private set; }
-        public bool Completed { get; private set; }
+        public Grid Grid { get; protected set; }
+        public bool Initialized { get; protected set; }
+        public bool Completed { get; protected set; }
         private bool GameWon { get; set; }
 
         public abstract void RenderGrid();
