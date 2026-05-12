@@ -1,17 +1,27 @@
 # Minesweeper
 
-A collection of Minesweeper implementations in multiple languages and frameworks.
+A cross-stack collection of Minesweeper implementations — to compare engines, idioms, and presentation across languages.
 
-This repository is useful if you want to compare game logic and console/UI approaches across different stacks.
+## Highlights (every implementation)
+
+- 🎯 **First-click safety** — the first reveal is always safe (3×3 safe zone)
+- 🚩 **Flagging & questioning** — cycle hidden → flag → ? → hidden
+- 💣 **Chord-reveal** — click a numbered cell with the matching number of flags to clear neighbors at once
+- ⏱️ **Live timer & mine counter** — classic three-digit displays
+- 🎚️ **Difficulty presets** — Beginner (9×9 / 10), Intermediate (16×16 / 40), Expert (16×30 / 99) + Custom
+- 🎨 **Impressive visuals** — colored numbers, ANSI box-drawn boards, neon themes, animated faces
+- 🔁 **Replay flow** — instant new game / restart on win or loss
 
 ## Implementations
 
-- `csharp/` - .NET 10 console app with engine/project separation and NUnit tests
-- `kotlin/` - Kotlin/JVM console app with JUnit tests
-- `go/` - Go console app
-- `rust/` - Rust console app
-- `python/` - Python console and Tkinter GUI versions
-- `react/` - React + TypeScript + Vite web app
+| Stack | Path | UI | Notes |
+|---|---|---|---|
+| C# / .NET 10 | [csharp/](csharp/) | ANSI console | Engine + Console + NUnit tests |
+| Kotlin / JVM | [kotlin/](kotlin/) | ANSI console | Gradle + JUnit; `application` plugin enabled |
+| Go | [go/](go/) | ANSI console | Single-file, stdlib only |
+| Rust | [rust/](rust/) | ANSI console | `rand` crate; `cargo run` |
+| Python 3 | [python/](python/) | ANSI console **and** Tkinter GUI | Shared `engine.py` |
+| React + TypeScript + Vite | [react/](react/) | Web (neon dark theme) | Hooks-based, custom CSS |
 
 ## Clone
 
@@ -25,17 +35,15 @@ cd Minesweeper
 Install only what you need for the implementation you want to run:
 
 - .NET SDK 10+ (for `csharp`)
-- JDK 22+ (for `kotlin`)
-- Go (for `go`)
+- JDK 17+ (for `kotlin`)
+- Go 1.21+ (for `go`)
 - Rust + Cargo (for `rust`)
-- Python 3 (for `python`)
+- Python 3.10+ with Tk (for `python`)
 - Node.js 18+ and npm (for `react`)
 
 ## Run Instructions
 
 ### C# (.NET 10)
-
-Run the console game:
 
 ```bash
 cd csharp
@@ -46,55 +54,52 @@ Run tests:
 
 ```bash
 cd csharp
-dotnet test Minesweeper.Tests/Minesweeper.Tests.csproj
+dotnet test
 ```
 
 ### Kotlin (JVM)
 
-Run tests from CLI:
+```bash
+cd kotlin
+./gradlew run --console=plain -q
+```
+
+Run tests:
 
 ```bash
 cd kotlin
-bash ./gradlew test
+./gradlew test
 ```
-
-Run the app from IntelliJ IDEA:
-
-1. Open the `kotlin` project in IntelliJ IDEA.
-2. Open `src/main/kotlin/Main.kt`.
-3. Run `main()` (`MainKt`).
-
-Note: The Gradle project currently does not define a `run` task.
 
 ### Go
 
 ```bash
 cd go
-go run minesweeper.go
+go run .
 ```
 
 ### Rust
 
 ```bash
 cd rust
-cargo run
+cargo run --release
 ```
 
-### Python
-
-Console version:
+### Python — console
 
 ```bash
 cd python
 python3 console.py
 ```
 
-Tkinter GUI version:
+### Python — Tkinter GUI
 
 ```bash
 cd python
 python3 gui.py
 ```
+
+GUI mouse controls: **Left** reveal · **Right** flag/question · **Middle** (or **Left+Right** together) chord.
 
 ### React + TypeScript (Vite)
 
@@ -104,7 +109,7 @@ npm install
 npm run dev
 ```
 
-Optional checks/build:
+Optional:
 
 ```bash
 npm run lint
@@ -112,11 +117,20 @@ npm run build
 npm run preview
 ```
 
-## Gameplay
+## Console command grammar
 
-Most console versions ask for a board size, mine count, and then moves such as `A1`, `B3`, etc.
+All console implementations share the same input grammar:
+
+| Input | Action |
+|---|---|
+| `A1`, `b5`, `K22` | Reveal cell at column-letter row-number |
+| `f A1` | Toggle flag (hidden → flagged → ? → hidden) |
+| `c A1` | Chord-reveal around a numbered cell |
+| `n` | New game |
+| `q` | Quit |
+| `h` | Help |
 
 ## Notes
 
-- This repo contains independent implementations rather than one shared engine across all languages.
+- Implementations are independent: each stack has its own engine and presentation, but they share the same feature contract and visual language so you can study idiomatic differences side-by-side.
 - Some folders include their own language-specific README files with extra details.
