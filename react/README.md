@@ -4,11 +4,13 @@ Web-based Minesweeper built with React, TypeScript, and Vite.
 
 ## Features
 
-- Preset boards: Easy (`8x8`, `10` mines), Medium (`16x16`, `40` mines), Expert (`24x24`, `99` mines)
+- Preset boards: Beginner (`9x9`, `10`), Intermediate (`16x16`, `40`), Expert (`16x30`, `99`)
 - Custom board setup
-- Left-click to reveal cells
-- Right-click to toggle flags
-- Restart and board selection after game over
+- First-click safety (3x3 safe zone around first reveal)
+- Left-click reveal
+- Right-click cycles hidden -> flag -> ? -> hidden
+- Chord reveal with both mouse buttons on a revealed number
+- Live timer, mine counter, and best-times tracking in `localStorage`
 
 ## Requirements
 
@@ -36,5 +38,6 @@ npm run preview
 
 ## Custom game constraints
 
-- Grid size input supports `4` to `26`.
-- Mine count input supports `1` to `236`.
+- Rows support `5` to `30`.
+- Cols support `5` to `40`.
+- Mine count supports `1` to `rows * cols - 9`.

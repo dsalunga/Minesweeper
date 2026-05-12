@@ -6,7 +6,7 @@ A modern, full-featured Minesweeper built with **Angular 18** (standalone compon
 
 - Classic gameplay: reveal, flag (right click), question mark, and **chord** (left + right click on a number)
 - First click is always safe (mines are placed after the first reveal, with a 3×3 safe zone)
-- Three preset difficulties + **Custom** boards (rows, cols, mines)
+- Three preset difficulties + **Custom** boards (rows `5-30`, cols `5-40`, mines up to `rows * cols - 9`)
 - Animated HUD with mine counter, smiley face, and timer
 - Win/lose overlay with animated card and confetti-style glow
 - Saves your **best times** per difficulty in `localStorage`
@@ -30,6 +30,12 @@ npm run build
 ```
 
 Outputs to `dist/minesweeper`.
+
+## Test
+
+```bash
+npm test
+```
 
 ## Controls
 
