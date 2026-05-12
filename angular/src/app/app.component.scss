@@ -1,0 +1,214 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 16px 40px;
+  gap: 22px;
+}
+
+.app-header {
+  width: min(960px, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+  background: linear-gradient(180deg, rgba(20, 26, 56, 0.65), rgba(10, 14, 32, 0.65));
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  letter-spacing: 4px;
+  font-size: 1.4rem;
+}
+
+.logo-icon {
+  display: inline-flex;
+  filter: drop-shadow(0 0 8px rgba(110, 231, 255, 0.45));
+}
+
+.logo-text {
+  background: linear-gradient(90deg, #6ee7ff, #a78bfa, #ff4d6d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 22px rgba(110, 231, 255, 0.25);
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+.ctl {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(110, 231, 255, 0.55);
+  }
+
+  &.primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #0b1020;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(110, 231, 255, 0.35);
+
+    &:hover { transform: translateY(-1px); }
+  }
+}
+
+.frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.app-footer {
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+}
+
+/* ---- Overlay ---- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 7, 15, 0.55);
+  backdrop-filter: blur(4px);
+  border-radius: 14px;
+  animation: fade-in 0.3s ease;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.overlay-card {
+  background: linear-gradient(180deg, rgba(30, 40, 88, 0.95), rgba(14, 19, 44, 0.98));
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 22px 28px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  max-width: 360px;
+
+  h2 {
+    margin: 6px 0 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+  }
+
+  p { margin: 0 0 14px; color: var(--muted); }
+}
+
+.overlay.win .overlay-card h2 {
+  background: linear-gradient(90deg, #2ee6a6, #6ee7ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.overlay.lose .overlay-card h2 {
+  background: linear-gradient(90deg, #ff4d6d, #ffcc4d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.overlay-emoji {
+  font-size: 3rem;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+  animation: pop 0.5s ease;
+}
+
+.overlay-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #0b1020;
+    box-shadow: 0 6px 18px rgba(110, 231, 255, 0.35);
+
+    &:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(110, 231, 255, 0.55); }
+  }
+
+  &.ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.18);
+
+    &:hover { background: rgba(255, 255, 255, 0.06); }
+  }
+}
+
+/* ---- Modal ---- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 7, 15, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fade-in 0.2s ease;
+  backdrop-filter: blur(6px);
+  padding: 16px;
+}
+
+.modal-content {
+  animation: scale-in 0.25s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}

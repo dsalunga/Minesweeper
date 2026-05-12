@@ -1,0 +1,58 @@
+.board {
+  --cell-size: 34px;
+  display: grid;
+  gap: 3px;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(20, 26, 56, 0.85), rgba(10, 14, 32, 0.85));
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  box-shadow:
+    var(--shadow),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  transition: filter 0.3s ease, transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 0%, rgba(110, 231, 255, 0.08), transparent 50%),
+              radial-gradient(circle at 100% 100%, rgba(167, 139, 250, 0.08), transparent 50%);
+  pointer-events: none;
+}
+
+.board.game-over:not(.won) {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97);
+  filter: saturate(1.2);
+}
+
+.board.won {
+  box-shadow:
+    var(--shadow),
+    0 0 0 2px rgba(46, 230, 166, 0.55),
+    0 0 50px rgba(46, 230, 166, 0.45);
+  animation: glow 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+@keyframes glow {
+  from { box-shadow: var(--shadow), 0 0 0 2px rgba(46, 230, 166, 0.4), 0 0 35px rgba(46, 230, 166, 0.3); }
+  to   { box-shadow: var(--shadow), 0 0 0 2px rgba(46, 230, 166, 0.7), 0 0 60px rgba(46, 230, 166, 0.6); }
+}
+
+@media (max-width: 720px) {
+  .board { --cell-size: 28px; gap: 2px; padding: 10px; }
+}
+
+@media (max-width: 480px) {
+  .board { --cell-size: 22px; gap: 2px; padding: 8px; }
+}
