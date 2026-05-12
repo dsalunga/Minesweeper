@@ -1,127 +1,252 @@
 package org.minesweeper
 
 import org.minesweeper.engine.BaseGame
-import org.minesweeper.engine.Point
-import kotlin.math.round
+import org.minesweeper.engine.Cell
 
-
-/**
- * Implementation of the game logic in a console application
- */
 class GameConsole : BaseGame() {
-    override fun initialize() {
-        val size = askGridSize()
-        val numberOfMines = askNumberOfMines(size)
-        initialize(size, numberOfMines)
+    private companion object {
+        const val RESET = "\u001B[0m"
+        const val BOLD = "\u001B[1m"
+        const val RED = "\u001B[91m"
+        const val GREEN = "\u001B[92m"
+        const val YELLOW = "\u001B[93m"
+        const val CYAN = "\u001B[96m"
+        const val WHITE = "\u001B[97m"
+        const val GRAY = "\u001B[90m"
+        const val PURPLE = "\u001B[95m"
+        const val ORANGE = "\u001B[38;5;208m"
+        const val TEAL = "\u001B[38;5;44m"
+        const val VIOLET = "\u001B[38;5;141m"
+        const val BG_RED = "\u001B[48;5;124m"
+        val NUM_COLOR = arrayOf("", CYAN, GREEN, RED, VIOLET, ORANGE, TEAL, WHITE, GRAY)
     }
 
-    override fun renderGrid() {
-        val pad = if (grid.size >= 10) " " else "" // Add padding for single-digit numbers for even grid display when grid size is 10 or more
+    private var rowsCfg: Int = 9
+    private var colsCfg: Int = 9
+    private var minesCfg: Int = 10
+    private var firstClick: Boolean = true
+    private var startNanos: Long = 0L
+    private var endNanos: Long = 0L
 
-        println("\nHere is your updated minefield:")
-        print("  ")
-        for (i in 1..grid.size) {
-            print("$i " + (if (i < 10) pad else ""))
-        }
+    override fun initialize() {
         println()
-        for (i in 0 until grid.size) {
-            print("${'A' + i} ")
-            for (j in 0 until grid.size) {
-                val cell = grid.cells[i][j]
-                when {
-                    !cell.isRevealed -> print("_ $pad")
-                    cell.isMine -> {
-                        print("* $pad")
-                    }
-                    else -> print("${cell.adjacentMines} $pad")
-                }
-            }
-            println()
-        }
-        println()
+        println(c("   ╔══════════════════════════════════════════════╗", CYAN, BOLD))
+        println(c("   ║   M I N E S W E E P E R   ·   K O T L I N    ║", CYAN, BOLD))
+        println(c("   ╚══════════════════════════════════════════════╝", CYAN, BOLD))
+
+        val (r, k, m) = askDifficulty()
+        rowsCfg = r; colsCfg = k; minesCfg = m
+        firstClick = true
+        startNanos = 0L
+        endNanos = 0L
+        grid = org.minesweeper.engine.Grid(r, k)
+        initialized = true
+        completed = false
     }
 
     override fun runGameRoutine() {
+        printHelp()
         while (true) {
-            try {
-                renderGrid()
-                val choice = askSquareChoice()
-                val cell = selectCell(choice)
-                if (cell.isMine) {
-                    renderGrid()
-                    println("Oh no, you detonated a mine! Game over.")
-                } else if (isGameWon()) {
-                    renderGrid()
-                    println("Congratulations, you have won the game!")
-                } else {
-                    println("This square contains ${cell.adjacentMines} adjacent mine(s).")
-                }
-
-                if (completed) {
-                    informReplay()
-                }
-
-            } catch (e: Exception) {
-                println("Error: ${e.message}")
+            render()
+            if (completed) {
+                printOutcome()
+                informReplay()
+                return
+            }
+            print(c("\n› ", CYAN, BOLD))
+            val line = readlnOrNull() ?: return
+            val cmd = parseCommand(line)
+            if (cmd == null) { println(c("Unknown command. Type 'h' for help.", RED)); continue }
+            when (cmd.action) {
+                "quit" -> return
+                "help" -> printHelp()
+                "new"  -> { reset(); initialize(); return }
+                "flag" -> grid.toggleFlag(cmd.row, cmd.col)
+                "chord" -> doChord(cmd.row, cmd.col)
+                else   -> doReveal(cmd.row, cmd.col)
             }
         }
     }
 
-    private fun askSquareChoice(): Point {
-        var choice: Point?
-        do {
-            print("Select a square to reveal (e.g., A1): ")
-            val input = readlnOrNull()
-            choice = Point.tryParse(input, grid.size)
-            if (choice == null) println("Invalid input, try again.")
-        } while (choice == null)
-        return choice
+    private fun doReveal(row: Int, col: Int) {
+        val cell = grid.cells[row][col]
+        if (cell.isRevealed || cell.isFlagged) return
+        if (firstClick) {
+            grid.placeMinesSafe(minesCfg, row, col)
+            firstClick = false
+            startNanos = System.nanoTime()
+        }
+        val c = grid.uncoverCell(row, col)
+        if (c.isMine) {
+            c.exploded = true
+            grid.revealAllMines()
+            completed = true
+            endNanos = System.nanoTime()
+            return
+        }
+        if (checkWin()) { completed = true; endNanos = System.nanoTime() }
     }
 
-    private fun askGridSize(): Int {
-        var size = 0
-        var validInput = false
-        while (!validInput) {
-            print("Enter the size of the grid (between $MIN_GRID_SIZE and $MAX_GRID_SIZE): ")
-            val input = readlnOrNull()
-            if (input != null && input.toIntOrNull() in MIN_GRID_SIZE..MAX_GRID_SIZE) {
-                size = input.toInt()
-                validInput = true
-            } else {
-                println("Invalid input.")
+    private fun doChord(row: Int, col: Int) {
+        if (firstClick) return
+        val revealed = grid.chordReveal(row, col)
+        for (c in revealed) {
+            if (c.isMine) {
+                c.exploded = true
+                grid.revealAllMines()
+                completed = true
+                endNanos = System.nanoTime()
+                return
             }
         }
-        return size
+        if (checkWin()) { completed = true; endNanos = System.nanoTime() }
     }
 
-    private fun askNumberOfMines(gridSize: Int): Int {
-        var numberOfMines = 0
-        val maxMines = (gridSize * gridSize * MAX_MINES_PCT).toInt()
-        var validInput = false
-        while (!validInput) {
-            print("Enter the number of mines to place on the grid (maximum is $maxMines): ")
-            val input = readlnOrNull()
-            if (input != null) {
-                var inputFloat = input.toFloat()
-                if (inputFloat >=1 && inputFloat <= maxMines) {
-                    numberOfMines = round(inputFloat).toInt()
-                    println("numberOfMines: $numberOfMines")
-                    validInput = true
-                }
-            } else {
-                println("Invalid input. Please enter a number between 1 and $maxMines.")
+    private fun checkWin(): Boolean {
+        for (r in 0 until grid.rows) for (c in 0 until grid.cols) {
+            val cell = grid.cells[r][c]
+            if (!cell.isMine && !cell.isRevealed) return false
+        }
+        for (r in 0 until grid.rows) for (c in 0 until grid.cols) {
+            val cell = grid.cells[r][c]
+            if (cell.isMine && !cell.isFlagged) cell.isFlagged = true
+        }
+        return true
+    }
+
+    override fun renderGrid() = render()
+
+    private fun render() {
+        val minesRemaining = maxOf(minesCfg - grid.flagsPlaced, 0)
+        val elapsed = if (startNanos == 0L) 0
+            else if (completed) ((endNanos - startNanos) / 1_000_000_000L).toInt()
+            else ((System.nanoTime() - startNanos) / 1_000_000_000L).toInt()
+        val face = if (completed) (if (isLost()) "(x_x)" else "(\u25D5\u203F\u25D5)") else "(\u2022_\u2022)"
+
+        println()
+        println(
+            c("  \u2691 ${"%03d".format(minesRemaining)}", PURPLE, BOLD) + "   " +
+            c(face, YELLOW, BOLD) + "   " +
+            c("\u23F1 ${"%03d".format(elapsed.coerceAtMost(999))}", CYAN, BOLD)
+        )
+
+        print("    ")
+        for (j in 0 until grid.cols) print(c(" ${'A' + j} ", YELLOW, BOLD))
+        println()
+        val border = "─".repeat(grid.cols * 3)
+        println("   " + c("┌${border}┐", GRAY))
+        for (r in 0 until grid.rows) {
+            print(c("%2d ".format(r + 1), YELLOW, BOLD) + c("│", GRAY))
+            for (col in 0 until grid.cols) print(renderCell(grid.cells[r][col]))
+            println(c("│", GRAY))
+        }
+        println("   " + c("└${border}┘", GRAY))
+    }
+
+    private fun renderCell(cell: Cell): String = when {
+        cell.wrongFlag -> c(" ✕ ", RED, BOLD)
+        cell.isFlagged -> c(" ⚑ ", PURPLE, BOLD)
+        cell.isQuestioned -> c(" ? ", YELLOW, BOLD)
+        !cell.isRevealed -> c(" · ", GRAY)
+        cell.isMine -> c(" ✱ ", if (cell.exploded) "$BG_RED$WHITE" else RED, BOLD)
+        cell.adjacentMines == 0 -> "   "
+        else -> c(" ${cell.adjacentMines} ", NUM_COLOR[cell.adjacentMines], BOLD)
+    }
+
+    private fun isLost(): Boolean {
+        for (r in 0 until grid.rows) for (col in 0 until grid.cols)
+            if (grid.cells[r][col].isMine && grid.cells[r][col].exploded) return true
+        return false
+    }
+
+    private fun printOutcome() {
+        if (isLost()) println(c("\n  💥  B O O M  💥", RED, BOLD))
+        else {
+            val s = ((endNanos - startNanos) / 1_000_000_000L).toInt()
+            println(c("\n  ✨  V I C T O R Y  ✨", GREEN, BOLD))
+            println(c("  Cleared in ${s}s", GREEN))
+        }
+    }
+
+    private data class Difficulty(val rows: Int, val cols: Int, val mines: Int)
+
+    private fun askDifficulty(): Difficulty {
+        println(c("\nChoose difficulty:", BOLD, CYAN))
+        println("  ${c("1", YELLOW, BOLD)}) Beginner       9 × 9    10 mines")
+        println("  ${c("2", YELLOW, BOLD)}) Intermediate  16 × 16   40 mines")
+        println("  ${c("3", YELLOW, BOLD)}) Expert        16 × 30   99 mines")
+        println("  ${c("4", YELLOW, BOLD)}) Custom")
+        while (true) {
+            print(c("\nSelection: ", GREEN))
+            when (readlnOrNull()?.trim()?.lowercase()) {
+                "1", "b", "beginner" -> return Difficulty(9, 9, 10)
+                "2", "i", "intermediate" -> return Difficulty(16, 16, 40)
+                "3", "e", "expert" -> return Difficulty(16, 30, 99)
+                "4", "c", "custom" -> return askCustom()
+                else -> println(c("Please choose 1-4.", RED))
             }
         }
-        return numberOfMines
+    }
+
+    private fun askCustom(): Difficulty {
+        val r = readInt("Rows (5-26): ", 5, 26)
+        val k = readInt("Cols (5-26): ", 5, 26)
+        val maxMines = r * k - 9
+        val m = readInt("Mines (1-$maxMines): ", 1, maxMines)
+        return Difficulty(r, k, m)
+    }
+
+    private fun readInt(prompt: String, min: Int, max: Int): Int {
+        while (true) {
+            print(c(prompt, GREEN))
+            val v = readlnOrNull()?.trim()?.toIntOrNull()
+            if (v != null && v in min..max) return v
+            println(c("Please enter a number between $min and $max.", RED))
+        }
+    }
+
+    private data class Command(val action: String, val row: Int, val col: Int)
+
+    private fun parseCommand(text: String): Command? {
+        var t = text.trim().lowercase()
+        if (t.isEmpty()) return null
+        if (t == "q" || t == "quit" || t == "exit") return Command("quit", 0, 0)
+        if (t == "h" || t == "?" || t == "help") return Command("help", 0, 0)
+        if (t == "n" || t == "new") return Command("new", 0, 0)
+
+        var action = "reveal"
+        if (t.length > 1 && t[0] == 'f') { action = "flag"; t = t.substring(1).trim() }
+        else if (t.length > 1 && t[0] == 'c') { action = "chord"; t = t.substring(1).trim() }
+
+        if (t.length < 2) return null
+        val ch = t[0].uppercaseChar()
+        if (ch < 'A' || ch > 'Z') return null
+        val col = ch - 'A'
+        val row = (t.substring(1).toIntOrNull() ?: return null) - 1
+        if (row !in 0 until grid.rows || col !in 0 until grid.cols) return null
+        return Command(action, row, col)
+    }
+
+    private fun printHelp() {
+        println(c("\nCommands:", BOLD, CYAN))
+        println("  A1, B5      reveal cell at column-letter row-number")
+        println("  f A1        toggle flag on cell A1")
+        println("  c A1        chord-reveal around a numbered cell")
+        println("  n           new game · q quit · h help")
     }
 
     private fun informReplay() {
-        print("Press any key to play again...")
-        readlnOrNull()
-        println()
-
+        print(c("\nPlay again? [Y/n] ", GREEN))
+        val v = readlnOrNull()?.trim()?.lowercase()
+        if (v == "n" || v == "no" || v == "q" || v == "quit") {
+            println(c("\nThanks for playing!\n", CYAN, BOLD))
+            kotlin.system.exitProcess(0)
+        }
         reset()
         initialize()
         start()
     }
+
+    private fun c(text: String, vararg codes: String): String =
+        codes.joinToString("") + text + RESET
 }

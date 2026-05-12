@@ -1,9 +1,14 @@
 plugins {
     kotlin("jvm") version "2.0.0"
+    application
 }
 
 group = "org.minesweeper"
 version = "1.0-SNAPSHOT"
+
+application {
+    mainClass.set("org.minesweeper.MainKt")
+}
 
 repositories {
     mavenCentral()
