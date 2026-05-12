@@ -1,5 +1,5 @@
-import React from 'react';
-import './Game.css'
+import { memo, type CSSProperties, type MouseEvent } from "react";
+import "./Game.css";
 
 interface CellProps {
     revealed: boolean;
@@ -7,25 +7,25 @@ interface CellProps {
     flag: boolean;
     adjacentMines: number;
     onClick: () => void;
-    onRightClick: (event: React.MouseEvent) => void;
+    onRightClick: (event: MouseEvent) => void;
 }
 
-const Cell: React.FC<CellProps> = ({ revealed, mine, flag, adjacentMines, onClick, onRightClick }) => {
-    let display = '';
-    let style = {
-        backgroundColor: revealed ? '#fdfdfd' : '#bebebe',
-        userSelect: 'none' as 'none',
+const Cell = memo(({ revealed, mine, flag, adjacentMines, onClick, onRightClick }: CellProps) => {
+    let display = "";
+    const style: CSSProperties = {
+        backgroundColor: revealed ? "#fdfdfd" : "#bebebe",
+        userSelect: "none",
     };
 
     if (revealed) {
         if (mine) {
-            display = '💣';
-            style.backgroundColor = '#e57373';
+            display = "💣";
+            style.backgroundColor = "#e57373";
         } else if (adjacentMines > 0) {
             display = String(adjacentMines);
         }
     } else if (flag) {
-        display = '🚩';
+        display = "🚩";
     }
 
     return (
@@ -33,6 +33,6 @@ const Cell: React.FC<CellProps> = ({ revealed, mine, flag, adjacentMines, onClic
             {display}
         </div>
     );
-};
+});
 
 export default Cell;

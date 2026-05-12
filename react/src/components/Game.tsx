@@ -1,13 +1,13 @@
-import React, { useState, useCallback } from 'react';
-import Grid from './Grid';
+import { useCallback, useState } from "react";
+import Grid from "./Grid";
 
 interface GameProps {
     gridSize: number;
     numMines: number;
-    selectBoard: () => void;  // Callback to reset game in App component
+    selectBoard: () => void;
 }
 
-const Game: React.FC<GameProps> = ({ gridSize, numMines, selectBoard }) => {
+const Game = ({ gridSize, numMines, selectBoard }: GameProps) => {
     const [gameOver, setGameOver] = useState(false);
     const [gameWon, setGameWon] = useState(false);
     const [resetCounter, setResetCounter] = useState(0);
@@ -17,11 +17,11 @@ const Game: React.FC<GameProps> = ({ gridSize, numMines, selectBoard }) => {
         setGameWon(won);
     }, []);
 
-    const resetGame = () => {
+    const resetGame = useCallback(() => {
         setGameOver(false);
         setGameWon(false);
-        setResetCounter(c => c + 1);
-    };
+        setResetCounter((current) => current + 1);
+    }, []);
 
     return (
         <div>
