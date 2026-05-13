@@ -22,6 +22,18 @@ A cross-stack collection of Minesweeper implementations to compare engines, idio
 | Python 3 | [python/](python/) | ANSI console and Tkinter GUI | Shared `engine.py` |
 | React + TypeScript + Vite | [react/](react/) | Web | Hooks-based state + custom styling |
 | Angular 18 | [angular/](angular/) | Web | Standalone components + signals |
+| Electron | [electron/](electron/) | Cross-platform desktop | Chromium shell + neon UI |
+| Tauri | [tauri/](tauri/) | Cross-platform desktop | Rust core + webview UI |
+| Capacitor | [capacitor/](capacitor/) | iOS / Android / Web | Web UI bridged to native shells |
+| React Native (Expo) | [reactnative/](reactnative/) | iOS / Android / Web | Pure RN components |
+| Flutter | [flutter/](flutter/) | iOS / Android / Web / Desktop | Material 3 dark theme |
+| Python pygame | [python/pygame_app.py](python/pygame_app.py) | Desktop GUI | Neon HUD with LED counters |
+| Go (Ebitengine) | [go-graphics/](go-graphics/) | Desktop GUI | 2D engine with vector primitives |
+| Rust (macroquad) | [rust-graphics/](rust-graphics/) | Desktop GUI | Single-binary GPU-accelerated UI |
+| .NET MAUI | [maui/](maui/) | iOS / Android / macOS / Windows | Shared C# engine + XAML-less code-only UI |
+| Unity | [unity/](unity/) | Cross-platform game engine | UGUI bootstrap, no scene wiring needed |
+| Native iOS (SwiftUI) | [ios/](ios/) | iPhone / iPad | Reusable `MinesweeperCore` Swift Package |
+| Native Android (Compose) | [android/](android/) | Android | Jetpack Compose + Material 3 |
 
 ## Clone
 
@@ -146,6 +158,41 @@ C#, Kotlin, Go, and Rust share this grammar:
 | `h` | Help |
 
 Python console uses the same grammar except it currently does not expose `c A1` (chord).
+
+### Electron / Tauri / Capacitor / React Native / Flutter
+
+See each subfolder README for the full setup. Quick starts:
+
+```bash
+cd electron && npm install && npm start
+cd tauri && npm install && npm run tauri dev
+cd capacitor && npm install && npm run dev          # web preview
+cd reactnative && npm install && npx expo start
+cd flutter && flutter pub get && flutter run -d chrome
+```
+
+### Graphics-rich desktop ports
+
+```bash
+cd python && python3 -m pip install pygame && python3 pygame_app.py
+cd go-graphics && go run .
+cd rust-graphics && cargo run --release
+```
+
+### .NET MAUI / Unity
+
+```bash
+cd maui && dotnet workload install maui && dotnet build -t:Run -f net8.0-maccatalyst
+# Unity: open the unity/ folder in Unity Hub (2022.3 LTS), attach
+# Assets/Scripts/MinesweeperBootstrap.cs to a GameObject, press Play.
+```
+
+### Native mobile
+
+```bash
+# iOS — open ios/ in Xcode 15+ (uses local Swift Package MinesweeperCore)
+# Android — open android/ in Android Studio Hedgehog+ and run :app
+```
 
 ## Notes
 
