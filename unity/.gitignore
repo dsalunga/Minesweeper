@@ -1,0 +1,15 @@
+[Bb]uild/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Uu]serSettings/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.unityproj
+.vs/
+.vscode/
