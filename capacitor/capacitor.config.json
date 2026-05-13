@@ -1,0 +1,8 @@
+{
+  "appId": "com.dsalunga.minesweeper",
+  "appName": "Minesweeper",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

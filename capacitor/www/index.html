@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <title>Minesweeper</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app" id="app">
+    <header class="hud">
+      <div class="brand">MINE&middot;SWEEPER</div>
+      <div class="hud-row">
+        <div class="counter" id="mines">000</div>
+        <button class="face" id="face" title="New game">🙂</button>
+        <div class="counter" id="timer">000</div>
+      </div>
+      <div class="presets">
+        <button data-preset="beginner" class="active">Beginner</button>
+        <button data-preset="intermediate">Intermediate</button>
+        <button data-preset="expert">Expert</button>
+      </div>
+      <div class="mode-toggle">
+        <button id="mode-reveal" class="active">⛏ Reveal</button>
+        <button id="mode-flag">⚑ Flag</button>
+      </div>
+    </header>
+    <section class="board-wrap">
+      <div class="board" id="board"></div>
+      <div class="banner" id="banner" hidden></div>
+    </section>
+    <footer class="hint">
+      Tap to reveal · Long-press to flag · Toggle mode for thumb-friendly flagging
+    </footer>
+  </main>
+  <script src="renderer.js"></script>
+</body>
+</html>
