@@ -25,6 +25,14 @@ cd python
 python3 gui.py
 ```
 
+## Run the pygame version (full neon graphics)
+
+```bash
+cd python
+pip install pygame
+python3 pygame_app.py
+```
+
 ## Gameplay notes
 
 - Shared presets: Beginner (`9x9`, `10`), Intermediate (`16x16`, `40`), Expert (`16x30`, `99`), and Custom.
