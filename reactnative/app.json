@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Minesweeper",
+    "slug": "minesweeper-rn",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0c1024",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.dsalunga.minesweeper" },
+    "android": { "package": "com.dsalunga.minesweeper" },
+    "web": { "bundler": "metro" }
+  }
+}
