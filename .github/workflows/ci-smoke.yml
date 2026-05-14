@@ -1,0 +1,134 @@
+name: CI Smoke
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ci-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core-smoke:
+    name: Core smoke (CLI + engine)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.x"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: C# build + tests
+        run: |
+          dotnet build csharp/Minesweeper.sln --nologo
+          dotnet test csharp/Minesweeper.Tests/Minesweeper.Tests.csproj --nologo
+
+      - name: Kotlin tests
+        run: ./kotlin/gradlew -p kotlin test --no-daemon
+
+      - name: Go build
+        working-directory: go
+        run: go build ./...
+
+      - name: Rust tests
+        working-directory: rust
+        run: cargo test --locked
+
+      - name: Python syntax compile
+        run: python3 -m compileall python
+
+  web-smoke:
+    name: Web smoke (${{ matrix.stack }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - stack: react
+            dir: react
+            install: npm ci
+            verify: npm run build
+          - stack: angular
+            dir: angular
+            install: npm ci
+            verify: npm run build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.dir }}
+        run: ${{ matrix.install }}
+
+      - name: Verify build
+        working-directory: ${{ matrix.dir }}
+        run: ${{ matrix.verify }}
+
+  shell-smoke:
+    name: Shell smoke (${{ matrix.stack }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - stack: electron
+            dir: electron
+            verify: npx electron --version
+          - stack: capacitor
+            dir: capacitor
+            verify: npx cap --version
+          - stack: reactnative
+            dir: reactnative
+            verify: npx expo config --type public --json > /dev/null
+          - stack: tauri
+            dir: tauri
+            verify: npx tauri --version
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.dir }}
+        run: npm install --no-audit --no-fund
+
+      - name: Verify CLI surface
+        working-directory: ${{ matrix.dir }}
+        run: ${{ matrix.verify }}
