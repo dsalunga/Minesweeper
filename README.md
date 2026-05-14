@@ -47,11 +47,16 @@ cd Minesweeper
 Install only what you need for the implementation you want to run:
 
 - .NET SDK 10+ (for `csharp`)
-- JDK 17+ (for `kotlin`)
-- Go 1.26+ (for `go`)
-- Rust + Cargo (for `rust`)
-- Python 3.10+ with Tk (for `python`)
-- Node.js 18+ and npm (for `react` and `angular`)
+- .NET SDK 8 + MAUI workload (for `maui`)
+- JDK 17+ (for `kotlin` and `android`)
+- Go 1.26+ (for `go`) and Go 1.21+ (for `go-graphics`)
+- Rust + Cargo (for `rust`, `rust-graphics`, and `tauri`)
+- Python 3.10+ with Tk (for `python`; `pygame` is optional for `pygame_app.py`)
+- Node.js 18+ and npm (for `react`, `angular`, `electron`, `capacitor`, `reactnative`, and `tauri`)
+- Flutter SDK (for `flutter`)
+- Xcode 15+ on macOS (for `ios`)
+- Android Studio Hedgehog+ (for `android`)
+- Unity 2022.3 LTS (for `unity`)
 
 ## Run Instructions
 
@@ -165,8 +170,8 @@ See each subfolder README for the full setup. Quick starts:
 
 ```bash
 cd electron && npm install && npm start
-cd tauri && npm install && npm run tauri dev
-cd capacitor && npm install && npm run dev          # web preview
+cd tauri && npm install && npm run dev
+cd capacitor && npm install && npm run serve        # web preview
 cd reactnative && npm install && npx expo start
 cd flutter && flutter pub get && flutter run -d chrome
 ```
